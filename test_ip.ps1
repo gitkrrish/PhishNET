@@ -1,0 +1,2 @@
+$res = Invoke-WebRequest -Uri http://localhost:8787/api/analyze/ip -Method POST -Headers @{'Content-Type'='application/json'; 'Authorization'='Bearer 162da45a3bc407dfccf0423ecc9f553d246d25dfb3c2dd72ca4f614cc3e44ac0'} -Body '{"ip":"89.111.28.79"}' -ErrorAction Stop
+$res.Content

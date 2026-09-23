@@ -1,0 +1,413 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap');
+@import "tailwindcss";
+
+/* ============================================================
+  PhishNet — DESIGN TOKENS
+   Light → :root     Dark → html.dark (class toggled by ThemeContext)
+   All color tokens are CSS custom properties so every inline
+   style that references var(--tw-*) adapts automatically.
+   ============================================================ */
+
+/* ── LIGHT ─────────────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --tw-canvas:        #F4F1EA;
+  --tw-canvas-warm:   #FBFAF6;
+  --tw-canvas-mid:    #EDE8DD;
+  --tw-panel:         #FBFAF6;
+  --tw-panel-alt:     #F4F1EA;
+  --tw-panel-inset:   #EDE8DD;
+
+  /* Borders — solid, visible */
+  --tw-border:        #D0D2CE;
+  --tw-border-mid:    #DDE0DC;
+  --tw-border-strong: #B8BCB5;
+
+  /* Text — WCAG AA on light surfaces */
+  --tw-text:          #181818;   /* contrast 16:1 on canvas-warm */
+  --tw-text-muted:    #3E4B56;   /* contrast 7:1 */
+  --tw-text-faint:    #6E7B85;   /* contrast 4.5:1 — use sparingly */
+
+  /* Brand */
+  --tw-burgundy:      #731F32;
+  --tw-wine:          #481521;
+  --tw-brass:         #9A7230;
+  --tw-moss:          #3D5939;
+  --tw-dust:          #3E4B56;
+
+  /* Threat */
+  --tw-critical:      #8B1E30;
+  --tw-high:          #8C2C2C;
+  --tw-medium:        #835518;
+  --tw-low:           #305530;
+  --tw-info:          #3E4B56;
+
+  /* Interactive */
+  --tw-hover:         #ECEAE2;
+  --tw-input-bg:      #FBFAF6;
+  --tw-input-border:  #B8BCB5;
+
+  /* Scrollbar */
+  --tw-scrollbar-track: #EDE8DD;
+  --tw-scrollbar-thumb: #B8BCB5;
+}
+
+/* ── DARK ──────────────────────────────────────────────────── */
+html.dark {
+  /* Surfaces — warm dark, not cold blue-black */
+  --tw-canvas:        #131110;
+  --tw-canvas-warm:   #171411;
+  --tw-canvas-mid:    #1D1916;
+
+  --tw-panel:         #221E1A;
+  --tw-panel-alt:     #2C2721;
+  --tw-panel-inset:   #352E28;
+
+  /* Borders — clearly visible lines on dark surfaces */
+  --tw-border:        #3E3630;
+  --tw-border-mid:    #4A4038;
+  --tw-border-strong: #5A5048;
+
+  /* Text — WCAG AA+ on all dark surfaces */
+  --tw-text:          #EDE8DD;   /* contrast >13:1 on panel */
+  --tw-text-muted:    #C8B8A8;   /* contrast ~6:1  */
+  --tw-text-faint:    #8C7C6C;   /* contrast ~3:1 — only decorative */
+
+  /* Brand — brightened for legibility on dark */
+  --tw-burgundy:      #E06070;   /* bright warm-pink, reads clearly */
+  --tw-wine:          #B84055;
+  --tw-brass:         #D4A440;
+  --tw-moss:          #7AC070;
+  --tw-dust:          #88A0B8;
+
+  /* Threat — saturated, clearly distinct */
+  --tw-critical:      #F06878;   /* vivid pink-red */
+  --tw-high:          #E07070;
+  --tw-medium:        #E0A040;
+  --tw-low:           #68C068;
+  --tw-info:          #78A0C0;
+
+  /* Interactive */
+  --tw-hover:         #2C2721;
+  --tw-input-bg:      #2C2721;
+  --tw-input-border:  #5A5048;
+
+  /* Scrollbar */
+  --tw-scrollbar-track: #1D1916;
+  --tw-scrollbar-thumb: #4A4038;
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Manrope', system-ui, sans-serif;
+  background-color: var(--tw-canvas);
+  color: var(--tw-text);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+  /* Only html background and color transition — not all elements */
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar            { width: 5px; height: 5px; }
+::-webkit-scrollbar-track      { background: var(--tw-scrollbar-track); }
+::-webkit-scrollbar-thumb      { background: var(--tw-scrollbar-thumb); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--tw-brass); }
+
+/* Font utilities */
+.font-serif { font-family: 'DM Serif Display', Georgia, serif; }
+.font-sans  { font-family: 'Manrope', system-ui, sans-serif; }
+.font-mono  { font-family: 'IBM Plex Mono', 'Courier New', monospace; }
+
+/* Selection */
+::selection {
+  background: var(--tw-burgundy);
+  color: #FBFAF6;
+}
+
+/* ============================================================
+   COMPONENT PRIMITIVES  (all token-aware)
+   ============================================================ */
+
+/* Verdict stamp */
+.stamp {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 2px solid currentColor;
+  display: inline-block;
+  padding: 4px 14px;
+  transform: rotate(-2deg);
+  border-radius: 2px;
+}
+
+.evidence-rule {
+  border-top: 1px solid var(--tw-border-mid);
+  margin: 0;
+}
+
+.redacted {
+  background: var(--tw-text);
+  color: transparent;
+  border-radius: 2px;
+  user-select: none;
+  display: inline-block;
+  min-width: 80px;
+}
+
+.annotation-underline {
+  border-bottom: 2px solid var(--tw-burgundy);
+  padding-bottom: 1px;
+}
+
+/* Page entrance animation */
+.page-enter {
+  animation: pageEnter 0.3s ease forwards;
+}
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Evidence number badge */
+.evidence-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--tw-burgundy);
+  color: #FBFAF6;
+  border-radius: 2px;
+  padding: 1px 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  flex-shrink: 0;
+}
+
+/* Confidence bar */
+.confidence-bar {
+  height: 3px;
+  background: var(--tw-border-mid);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.confidence-fill {
+  height: 100%;
+  background: var(--tw-burgundy);
+  border-radius: 2px;
+  transition: width 1s ease;
+}
+
+/* Demo / simulated data badge */
+.demo-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--tw-medium);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   SMOOTH THEME TRANSITIONS
+   Only applied to elements that hold themed background/border/color.
+   NOT applied to * (would break Framer Motion).
+   ============================================================ */
+div, span, header, footer, nav, main, section, aside,
+a, button, input, textarea, select, label, p, h1, h2, h3, h4, h5, h6,
+table, tr, td, th {
+  transition:
+    background-color 0.2s ease,
+    border-color     0.2s ease,
+    color            0.2s ease;
+}
+
+/* Exclude animated elements from the theme transition */
+[data-framer-motion],
+[style*="transform"],
+.page-enter,
+svg *,
+canvas {
+  transition: none !important;
+}
+
+/* ============================================================
+    PRINT / PDF STYLES
+    ============================================================ */
+@media print {
+  header, nav, .no-print, button, .demo-badge, .demo-label { display: none !important; }
+  .page-enter { animation: none !important; opacity: 1 !important; transform: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+  .rounded-sm { border-radius: 0 !important; }
+  main { padding: 0 !important; }
+  div, span, header, footer, nav, main, section, aside,
+  a, button, input, textarea, select, label, p, h1, h2, h3, h4, h5, h6,
+  table, tr, td, th {
+    transition: none !important;
+  }
+}
+
+/* ============================================================
+    DARK: INPUT OVERRIDES
+   tv.input uses inline `border` shorthand — we need to target
+   background and color independently to guarantee override.
+   ============================================================ */
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: var(--tw-input-bg) !important;
+  color:            var(--tw-text)     !important;
+  border-color:     var(--tw-input-border) !important;
+  color-scheme: dark;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: var(--tw-text-faint) !important;
+  opacity: 1;
+}
+
+html.dark input[type="radio"],
+html.dark input[type="checkbox"] {
+  accent-color: var(--tw-burgundy);
+}
+
+/* Option elements in dark selects */
+html.dark option {
+  background: var(--tw-panel-alt);
+  color: var(--tw-text);
+}
+
+/* ============================================================
+   DARK: RECHARTS
+   ============================================================ */
+html.dark .recharts-wrapper,
+html.dark .recharts-surface {
+  background: transparent !important;
+}
+
+html.dark .recharts-cartesian-axis-tick text,
+html.dark .recharts-polar-angle-axis-tick text {
+  fill: var(--tw-text-muted) !important;
+}
+
+html.dark .recharts-default-tooltip {
+  background-color: var(--tw-panel)  !important;
+  border:           1px solid var(--tw-border) !important;
+  color:            var(--tw-text)   !important;
+  box-shadow:       0 4px 12px rgba(0,0,0,0.4) !important;
+}
+
+html.dark .recharts-tooltip-label {
+  color: var(--tw-text) !important;
+}
+
+html.dark .recharts-tooltip-item {
+  color: var(--tw-text-muted) !important;
+}
+
+html.dark .recharts-legend-item-text {
+  color: var(--tw-text-muted) !important;
+}
+
+html.dark .recharts-text {
+  fill: var(--tw-text-muted) !important;
+}
+
+/* Area/bar chart grid lines */
+html.dark .recharts-cartesian-grid-horizontal line,
+html.dark .recharts-cartesian-grid-vertical line {
+  stroke: var(--tw-border) !important;
+  stroke-opacity: 0.6 !important;
+}
+
+/* ============================================================
+   DARK: REACT FLOW (evidence graph)
+   ============================================================ */
+html.dark .react-flow {
+  background-color: var(--tw-panel) !important;
+}
+
+html.dark .react-flow__background {
+  background-color: var(--tw-panel) !important;
+}
+
+html.dark .react-flow__background pattern circle,
+html.dark .react-flow__background pattern rect {
+  fill: var(--tw-border-strong) !important;
+}
+
+html.dark .react-flow__controls {
+  background:   var(--tw-panel-alt) !important;
+  border-color: var(--tw-border)    !important;
+  border-radius: 3px;
+}
+
+html.dark .react-flow__controls-button {
+  background:   var(--tw-panel-alt) !important;
+  border-color: var(--tw-border)    !important;
+}
+
+html.dark .react-flow__controls-button svg {
+  fill: var(--tw-text-muted) !important;
+}
+
+html.dark .react-flow__edge-path,
+html.dark .react-flow__connection-path {
+  stroke: var(--tw-border-strong) !important;
+}
+
+html.dark .react-flow__edge-textbg {
+  fill: var(--tw-panel) !important;
+}
+
+html.dark .react-flow__edge-text {
+  fill: var(--tw-text-muted) !important;
+  font-size: 9px;
+}
+
+html.dark .react-flow__minimap {
+  background: var(--tw-panel-alt) !important;
+}
+
+/* ============================================================
+   DARK: PANEL / CARD BACKGROUNDS
+   Elements that have style-injected backgroundColor via tv helper
+   will already pick up the token. These rules cover any
+   components that still rely on Tailwind utility classes.
+   ============================================================ */
+html.dark .bg-\[\#FBFAF6\],
+html.dark .bg-\[\#F4F1EA\],
+html.dark .bg-\[\#EDE8DD\] {
+  background-color: var(--tw-panel) !important;
+}
+
+html.dark .text-\[\#181818\] {
+  color: var(--tw-text) !important;
+}
+
+html.dark .text-\[\#657581\] {
+  color: var(--tw-text-muted) !important;
+}
+
+html.dark .border-\[\#C8CBC6\],
+html.dark .border-\[\#E7E8E5\] {
+  border-color: var(--tw-border) !important;
+}
