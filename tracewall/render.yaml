@@ -1,0 +1,49 @@
+﻿services:
+  - type: web
+    name: phishnet-api
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: .
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_OPTIONS
+        value: --experimental-sqlite
+      - key: API_PORT
+        value: "10000"
+      - key: CORS_ORIGIN
+        sync: false
+      - key: SESSION_HOURS
+        value: "8"
+      - key: DEMO_PASSWORD
+        sync: false
+      - key: MAX_BODY_BYTES
+        value: "5242880"
+      - key: EMAIL_DNS_SERVERS
+        value: "8.8.8.8,8.8.4.4"
+      - key: AZURE_DNS_SERVER
+        value: "168.63.129.16"
+      - key: IP_ANALYSIS_TIMEOUT_MS
+        value: "10000"
+      - key: EMAIL_ANALYSIS_TIMEOUT_MS
+        value: "5000"
+      - key: VIRUSTOTAL_API_KEY
+        sync: false
+      - key: ABUSEIPDB_API_KEY
+        sync: false
+      - key: OTX_API_KEY
+        sync: false
+      - key: IPWHO_API_KEY
+        sync: false
+      - key: IPINFO_TOKEN
+        sync: false
+      - key: IPQUALITYSCORE_API_KEY
+        sync: false
+      - key: PROXYCHECK_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false

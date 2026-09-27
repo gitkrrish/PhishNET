@@ -8,7 +8,7 @@ loadDotenv({ path: join(projectRoot, '.env.local') });
 loadDotenv();
 
 export const config = {
-  port: Number(process.env.API_PORT || 8787),
+  port: Number(process.env.PORT || process.env.API_PORT || 8787),
   corsOrigin: process.env.CORS_ORIGIN || '*',
   databaseFile: join(backendRoot, 'database', 'tracewall.sqlite'),
   recoveryFile: join(backendRoot, 'database', 'tracewall.json'),
