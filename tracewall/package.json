@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "api": "node --experimental-sqlite backend/server.mjs",
+    "start": "node --experimental-sqlite backend/server.mjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
