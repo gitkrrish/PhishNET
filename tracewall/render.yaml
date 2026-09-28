@@ -1,18 +1,16 @@
-﻿services:
+services:
   - type: web
     name: phishnet-api
     runtime: node
     region: oregon
     plan: free
-    rootDir: .
+    rootDir: tracewall
     buildCommand: npm install --omit=dev
-    startCommand: npm start
+    startCommand: node --experimental-sqlite backend/server.mjs
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
-      - key: NODE_OPTIONS
-        value: --experimental-sqlite
       - key: API_PORT
         value: "10000"
       - key: CORS_ORIGIN
