@@ -39,6 +39,86 @@
         "email": "analyst@tracewall.demo"
       },
       "expiresAt": "2026-10-04T04:47:16.641Z"
+    },
+    {
+      "token": "5667e81235f19594f338dbb1a27bbd17f1bbca4575320da821fde6c42147f265",
+      "user": {
+        "id": "USR-DEMO-001",
+        "name": "Demo Analyst",
+        "role": "Security Analyst",
+        "email": "analyst@tracewall.demo"
+      },
+      "expiresAt": "2026-10-04T04:51:34.079Z"
+    },
+    {
+      "token": "4b205f6385b0d87a3e2ca6f0b249dce9e8b14ccc0de42ed53afef1a3f68eacbb",
+      "user": {
+        "id": "USR-DEMO-001",
+        "name": "Demo Analyst",
+        "role": "Security Analyst",
+        "email": "analyst@tracewall.demo"
+      },
+      "expiresAt": "2026-10-04T04:51:34.388Z"
+    },
+    {
+      "token": "db8e11a206eee81d4c9f07f23f0e05357c21d92c5085d4dc9f71161214611fb9",
+      "user": {
+        "id": "USR-DEMO-001",
+        "name": "Demo Analyst",
+        "role": "Security Analyst",
+        "email": "analyst@tracewall.demo"
+      },
+      "expiresAt": "2026-10-04T04:52:16.355Z"
+    },
+    {
+      "token": "ad222566bf0bbbf39da000b9fbfa9b02b375b0001f86ca5ec2a4ca7f5088b0cd",
+      "user": {
+        "id": "USR-DEMO-001",
+        "name": "Demo Analyst",
+        "role": "Security Analyst",
+        "email": "analyst@tracewall.demo"
+      },
+      "expiresAt": "2026-10-04T04:55:05.880Z"
+    },
+    {
+      "token": "aa8b484d0d1e7b1a8ff4909ed5d961f212adf7d43fac338ea9ac58e48702fa0f",
+      "user": {
+        "id": "USR-DEMO-001",
+        "name": "Demo Analyst",
+        "role": "Security Analyst",
+        "email": "analyst@tracewall.demo"
+      },
+      "expiresAt": "2026-10-04T04:55:14.821Z"
+    },
+    {
+      "token": "7b38efdf2db30ee1e3a3af9cf810660b240b84676b35ced43e6c19bd2a750187",
+      "user": {
+        "id": "USR-DEMO-001",
+        "name": "Demo Analyst",
+        "role": "Security Analyst",
+        "email": "analyst@tracewall.demo"
+      },
+      "expiresAt": "2026-10-04T04:56:55.950Z"
+    },
+    {
+      "token": "25581e94e56d75a25a31183c510e0d4c91d66497830b768ab7c4bf247a91d56f",
+      "user": {
+        "id": "USR-DEMO-001",
+        "name": "Demo Analyst",
+        "role": "Security Analyst",
+        "email": "analyst@tracewall.demo"
+      },
+      "expiresAt": "2026-10-04T04:57:19.153Z"
+    },
+    {
+      "token": "1716e2264541fd985f22168cd7d3ab5d945f14844520fb74ace77c6abdae2d51",
+      "user": {
+        "id": "USR-DEMO-001",
+        "name": "Demo Analyst",
+        "role": "Security Analyst",
+        "email": "analyst@tracewall.demo"
+      },
+      "expiresAt": "2026-10-04T04:57:36.997Z"
     }
   ],
   "cases": [
@@ -140,6 +220,108 @@
     }
   ],
   "audit": [
+    {
+      "id": "AUD-1791061057059-3abe88",
+      "time": "2026-10-03T20:57:37.059Z",
+      "actor": "Demo Analyst",
+      "action": "AUTH_SIGN_IN",
+      "target": "analyst@tracewall.demo",
+      "outcome": "SUCCESS",
+      "ip": "internal"
+    },
+    {
+      "id": "AUD-1791061039201-4bfbcd",
+      "time": "2026-10-03T20:57:19.202Z",
+      "actor": "Demo Analyst",
+      "action": "AUTH_SIGN_IN",
+      "target": "analyst@tracewall.demo",
+      "outcome": "SUCCESS",
+      "ip": "internal"
+    },
+    {
+      "id": "AUD-1791061016001-25a27e",
+      "time": "2026-10-03T20:56:56.001Z",
+      "actor": "Demo Analyst",
+      "action": "AUTH_SIGN_IN",
+      "target": "analyst@tracewall.demo",
+      "outcome": "SUCCESS",
+      "ip": "internal"
+    },
+    {
+      "id": "AUD-1791060914862-b25596",
+      "time": "2026-10-03T20:55:14.862Z",
+      "actor": "Demo Analyst",
+      "action": "AUTH_SIGN_IN",
+      "target": "analyst@tracewall.demo",
+      "outcome": "SUCCESS",
+      "ip": "internal"
+    },
+    {
+      "id": "AUD-1791060905934-f6ac40",
+      "time": "2026-10-03T20:55:05.934Z",
+      "actor": "Demo Analyst",
+      "action": "AUTH_SIGN_IN",
+      "target": "analyst@tracewall.demo",
+      "outcome": "SUCCESS",
+      "ip": "internal"
+    },
+    {
+      "id": "AUD-1791060736409-744868",
+      "time": "2026-10-03T20:52:16.409Z",
+      "actor": "Demo Analyst",
+      "action": "AUTH_SIGN_IN",
+      "target": "analyst@tracewall.demo",
+      "outcome": "SUCCESS",
+      "ip": "internal"
+    },
+    {
+      "id": "AUD-1791060694503-b0cf18",
+      "time": "2026-10-03T20:51:34.503Z",
+      "actor": "analyst@tracewall.demo",
+      "action": "AUTH_SIGN_IN_FAILED",
+      "target": "analyst@tracewall.demo",
+      "outcome": "FAILURE",
+      "ip": "internal",
+      "detail": "Rejected credentials"
+    },
+    {
+      "id": "AUD-1791060694448-9f0ee5",
+      "time": "2026-10-03T20:51:34.448Z",
+      "actor": "Demo Analyst",
+      "action": "AUTH_SIGN_IN",
+      "target": "analyst@tracewall.demo",
+      "outcome": "SUCCESS",
+      "ip": "internal"
+    },
+    {
+      "id": "AUD-1791060694294-115002",
+      "time": "2026-10-03T20:51:34.294Z",
+      "actor": "nobody@nowhere.test",
+      "action": "AUTH_SIGN_IN_FAILED",
+      "target": "nobody@nowhere.test",
+      "outcome": "FAILURE",
+      "ip": "internal",
+      "detail": "Rejected credentials"
+    },
+    {
+      "id": "AUD-1791060694200-168d1d",
+      "time": "2026-10-03T20:51:34.200Z",
+      "actor": "analyst@tracewall.demo",
+      "action": "AUTH_SIGN_IN_FAILED",
+      "target": "analyst@tracewall.demo",
+      "outcome": "FAILURE",
+      "ip": "internal",
+      "detail": "Rejected credentials"
+    },
+    {
+      "id": "AUD-1791060694130-581544",
+      "time": "2026-10-03T20:51:34.130Z",
+      "actor": "Demo Analyst",
+      "action": "AUTH_SIGN_IN",
+      "target": "analyst@tracewall.demo",
+      "outcome": "SUCCESS",
+      "ip": "internal"
+    },
     {
       "id": "AUD-1791060436762-951742",
       "time": "2026-10-03T20:47:16.762Z",

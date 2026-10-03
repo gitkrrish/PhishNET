@@ -66,6 +66,15 @@ const record = (handler) => async (input, init) => {
   lastMethod = init?.method ?? 'GET';
   return handler(input, init);
 };
+// Stubs every call, including sign-in, for the cases that examine the sign-in
+// request itself.
+const respondRaw = (handler) => {
+  globalThis.fetch = async (input, init) => {
+    lastUrl = String(input?.url ?? input);
+    lastMethod = init?.method ?? 'GET';
+    return handler(input, init);
+  };
+};
 
 const attempt = async (path, options) => {
   try {
@@ -119,6 +128,35 @@ ok(!spa.ok, 'the HTML 200 throws rather than resolving to {}');
 ok(spa.error?.stage === 'routing', 'the stage is routing', String(spa.error?.stage));
 ok(/not routed to the API backend/i.test(spa.error?.message ?? ''), 'the message says the request was not routed', spa.error?.message);
 ok(!spa.error?.message?.includes('<html'), 'no markup leaks into the message');
+
+// ── the deployed failure, reproduced exactly ──────────────────────────────
+// Observed on the live deployment: POST /api/auth/sign-in answered 405 with a
+// zero-length body, and GET /api/health answered 200 with the SPA document. The
+// API never emits 405 and never answers with anything but JSON, so these are a
+// request that never reached it. Reporting the 405 as a rejected method blames
+// the wrong component.
+section('A method rejection with a non-JSON body is a routing failure, not a contract failure');
+
+respondRaw(async () => new Response(null, { status: 405, statusText: 'Method Not Allowed' }));
+const methodRejected = await attempt('/auth/sign-in', { method: 'POST', body: JSON.stringify({ email: 'analyst@tracewall.demo', password: 'demo-password' }) });
+ok(!methodRejected.ok, 'the 405 throws');
+ok(methodRejected.error?.status === 405, 'the real status is still reported', String(methodRejected.error?.status));
+ok(methodRejected.error?.stage === 'routing', 'the stage is routing, not a method contract problem', String(methodRejected.error?.stage));
+ok(/not routed to the API backend/i.test(methodRejected.error?.message ?? ''), 'the message names the routing failure', methodRejected.error?.message);
+ok(!/does not accept this method/i.test(methodRejected.error?.message ?? ''), 'the message does not blame the API method', methodRejected.error?.message);
+ok(lastUrl.endsWith('/api/auth/sign-in') && lastMethod === 'POST', 'the sign-in call itself is correct', `${lastMethod} ${lastUrl}`);
+
+// A 405 that *does* carry JSON is a genuine contract answer and keeps its own
+// diagnosis, so the two remain distinguishable.
+respondWith(json(405, { error: { message: 'This endpoint accepts GET only' } }));
+const contract405 = await attempt('/intel/monitoring/hub');
+ok(contract405.error?.message?.includes('accepts GET only'), 'a JSON 405 keeps the backend message', contract405.error?.message);
+ok(contract405.error?.stage === 'routing', 'a JSON 405 is still staged as routing', String(contract405.error?.stage));
+
+// An empty 404 has the same signature and the same cause.
+respondWith(async () => new Response(null, { status: 404 }));
+const emptyNotFound = await attempt('/intel/monitoring/hub');
+ok(emptyNotFound.error?.stage === 'routing' && /not routed to the API backend/i.test(emptyNotFound.error?.message ?? ''), 'an empty 404 is reported as routing too', emptyNotFound.error?.message);
 
 // ── authentication ───────────────────────────────────────────────────────
 section('A rejected session is reported as an authentication failure');

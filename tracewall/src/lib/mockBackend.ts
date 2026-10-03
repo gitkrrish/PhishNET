@@ -96,21 +96,36 @@ export async function request<T = any>(path: string, options: RequestInit = {}):
     throw apiError(operation, 0, 'network', 'the API backend could not be reached');
   }
 
-  // Parsed leniently, then strictly, so a non-JSON 200 cannot be mistaken for
-  // a successful call — that silently returned `{}` before, which is how a
-  // request that never reached the backend came to render as an empty
-  // dashboard.
-  let payload: unknown;
-  try {
-    payload = raw ? JSON.parse(raw) : {};
-  } catch {
-    payload = null;
+  // This API answers every request with JSON, errors included — they all go
+  // through the one JSON writer in the backend. A response that carries no JSON
+  // at all therefore did not come from it: that is the signature of a static
+  // host or a routing fallback answering instead. Behind a 405 with a
+  // zero-length body that is exactly what happens, and the same signature that
+  // used to be swallowed and returned as `{}`, which is how a request that never
+  // reached the backend came to render as an empty dashboard. Reporting such a
+  // 405 as "this method is not supported here" blames the API contract when the
+  // route was never reached at all.
+  let payload: unknown = {};
+  let carriesJson = false;
+  if (raw) {
+    try {
+      payload = JSON.parse(raw);
+      carriesJson = true;
+    } catch {
+      carriesJson = false;
+    }
+  } else {
+    // A 2xx may legitimately have no body — 204 is what DELETE returns.
+    carriesJson = response.ok;
   }
 
-  if (payload === null) {
-    throw response.ok
-      ? apiError(operation, response.status, 'routing', 'the API URL answered with a non-JSON page, so the request was not routed to the API backend')
-      : apiError(operation, response.status, stageFor(response.status), detailFrom(null, response.status));
+  if (!carriesJson) {
+    throw apiError(
+      operation,
+      response.status,
+      'routing',
+      'the response carried no JSON, so the request was not routed to the API backend',
+    );
   }
   if (!response.ok) {
     throw apiError(operation, response.status, stageFor(response.status), detailFrom(payload, response.status));

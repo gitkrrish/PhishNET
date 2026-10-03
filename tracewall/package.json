@@ -18,6 +18,7 @@
     "api:monitoring": "node --experimental-sqlite backend/server.mjs",
     "verify:monitoring:backend": "rolldown temp-audit/monitoring-hub-backend.mts --format esm --platform node -o temp-audit/.out/monitoring-hub-backend.mjs && node temp-audit/.out/monitoring-hub-backend.mjs",
     "verify:monitoring:client": "rolldown -c temp-audit/render.config.mjs && node temp-audit/.out/monitoring-hub-client.mjs",
+    "verify:monitoring:scheduler": "rolldown -c temp-audit/scheduler.config.mjs && node temp-audit/.out/monitoring-scheduler-liveness.mjs",
     "verify:monitoring": "npm run verify:monitoring:backend && npm run verify:monitoring:client",
     "verify": "npm run verify:protection && npm run verify:render"
   },
