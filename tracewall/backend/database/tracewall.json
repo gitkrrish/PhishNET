@@ -119,6 +119,16 @@
         "email": "analyst@tracewall.demo"
       },
       "expiresAt": "2026-10-04T04:57:36.997Z"
+    },
+    {
+      "token": "2162a71c8efe5a2428e54bf05a3379df1f7f073ad4d1ba37aee8b31e5ab45840",
+      "user": {
+        "id": "USR-DEMO-001",
+        "name": "Demo Analyst",
+        "role": "Security Analyst",
+        "email": "analyst@tracewall.demo"
+      },
+      "expiresAt": "2026-10-04T05:00:32.280Z"
     }
   ],
   "cases": [
@@ -220,6 +230,15 @@
     }
   ],
   "audit": [
+    {
+      "id": "AUD-1791061232322-9fd961",
+      "time": "2026-10-03T21:00:32.322Z",
+      "actor": "Demo Analyst",
+      "action": "AUTH_SIGN_IN",
+      "target": "analyst@tracewall.demo",
+      "outcome": "SUCCESS",
+      "ip": "internal"
+    },
     {
       "id": "AUD-1791061057059-3abe88",
       "time": "2026-10-03T20:57:37.059Z",
