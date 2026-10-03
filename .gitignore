@@ -1,0 +1,139 @@
+# ============================================================================
+# Root .gitignore for PhishNet / Viper Trace
+# Covers: frontend/ (Vite+React), backend/ (Express+Prisma), tracewall/
+#         (Vite+React+AWS SDK+DynamoDB)
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Operating System Files
+# ----------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ----------------------------------------------------------------------------
+# Editor and IDE Files
+# ----------------------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-*
+*.code-workspace
+*.ntvs*
+*.njsproj
+*.suo
+*.sln
+
+# ----------------------------------------------------------------------------
+# Node.js Dependencies
+# ----------------------------------------------------------------------------
+node_modules/
+.pnpm-store/
+.yarn/cache/
+.yarn/unplugged/
+
+# ----------------------------------------------------------------------------
+# Build Outputs
+# ----------------------------------------------------------------------------
+dist/
+build/
+.next/
+.nuxt/
+.vite-temp/
+# TypeScript build info
+*.tsbuildinfo
+
+# ----------------------------------------------------------------------------
+# Cache Directories
+# ----------------------------------------------------------------------------
+.cache/
+.parcel-cache/
+.turbo/
+.nx/
+.eslintcache
+.eslint/
+node_modules/.cache/
+node_modules/.vite/
+node_modules/.vite-temp/
+
+# ----------------------------------------------------------------------------
+# Logs
+# ----------------------------------------------------------------------------
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ----------------------------------------------------------------------------
+# Python
+# ----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+env.bak/
+.venv.bak/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ----------------------------------------------------------------------------
+# Environment Files
+# Ignore actual environment files but keep template/example files.
+# .env and .env.* are ignored; .env.example is always un-ignored.
+# ----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# ----------------------------------------------------------------------------
+# Temporary and Test Artifacts
+# ----------------------------------------------------------------------------
+*.tmp
+*.temp
+
+# Audit / verification output (compiled bundles and route inspection results)
+/tracewall/temp-audit/.out/
+/tracewall/temp-audit/routes-out.json
+/tracewall/temp-audit/routes-err.txt
+
+# Lint output
+lint-output.json
+
+# ----------------------------------------------------------------------------
+# SQLite Databases (generated at runtime / local dev)
+# The schema, migrations, and seed JSON files are tracked; only the
+# binary database files are ignored.
+# ----------------------------------------------------------------------------
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite3
+*.sqlite3-journal
+
+# ----------------------------------------------------------------------------
+# Local Utility Scripts with Hardcoded Credentials
+# These are local dev-only scripts that contain hardcoded AWS credentials
+# or machine-specific paths. They must not be committed to the repository.
+# Use tracewall/.env.local and tracewall/.env.example for configuration.
+# ----------------------------------------------------------------------------
+describe_table.mjs
+test_aws.mjs
+check_env.mjs

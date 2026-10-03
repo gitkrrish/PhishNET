@@ -1,0 +1,53 @@
+{
+  "_comment": "App-level demo seed. The app_state document historically carried analyses, cases, reports and feedback but never alerts or exposures, which left the alert console reading fixture data from the browser while its write endpoints persisted to the backend. These records give the backend its own alert and exposure records, matching the same demo scenario, so GET /alerts returns real stored rows that the action endpoints can then update.",
+  "alerts": [
+    {
+      "id": "ALERT-2026-0091",
+      "title": "Probable Invoice-Diversion Campaign Detected",
+      "severity": "HIGH",
+      "category": "Campaign",
+      "created": "2026-09-12T11:15:00Z",
+      "status": "OPEN",
+      "relatedCase": "INV-2026-0041",
+      "summary": "4 related emails · 2 lookalike domains · 3 suspicious URLs · Finance department targeted · Confidence: High",
+      "recommendation": "Verify payment instructions through an independent communication channel"
+    },
+    {
+      "id": "ALERT-2026-0090",
+      "title": "Corporate Email Exposure Detected",
+      "severity": "HIGH",
+      "category": "Exposure",
+      "created": "2026-09-12T09:00:00Z",
+      "status": "AWAITING_APPROVAL",
+      "relatedCase": "INV-2026-0041",
+      "summary": "Identifier: a••••@secureops.in · Exposure type: Credential-pair indicator · Severity: High",
+      "recommendation": "Force password reset, revoke active sessions, and review sign-in activity"
+    },
+    {
+      "id": "ALERT-2026-0088",
+      "title": "Executive Impersonation Message Blocked",
+      "severity": "CRITICAL",
+      "category": "Impersonation",
+      "created": "2026-09-12T14:22:00Z",
+      "status": "CONTAINED",
+      "relatedCase": "INV-2026-0040",
+      "summary": "Display name matches CEO · SPF FAIL · Credential harvesting URL detected",
+      "recommendation": "Alert impersonated executive and reset any potentially accessed credentials"
+    }
+  ],
+  "exposures": [
+    {
+      "id": "EXP-00481",
+      "maskedIdentity": "a••••@secureops.in",
+      "domain": "secureops.in",
+      "exposureDate": "2026-09-12",
+      "sourceCategory": "Breach corpus (authorised feed)",
+      "dataType": "Credential-pair indicator",
+      "passwordStatus": "REDACTED",
+      "confidence": 86,
+      "severity": "HIGH",
+      "status": "AWAITING_APPROVAL",
+      "recommendedActions": ["Force password reset", "Revoke active sessions", "Review sign-in activity"]
+    }
+  ]
+}
