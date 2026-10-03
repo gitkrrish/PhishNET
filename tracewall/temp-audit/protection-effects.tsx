@@ -55,7 +55,16 @@ const ok = (condition, label, detail = '') => {
 };
 const section = (title) => console.log(`\n── ${title} ${'─'.repeat(Math.max(0, 58 - title.length))}`);
 
-const json = (body, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body });
+// Models a `Response` closely enough for the API client: `text()` as well as
+// `json()`. The client reads the body as text so it can tell a JSON answer from
+// an HTML page served by a routing fallback, so a double that only offered
+// `json()` no longer described what the browser hands it.
+const json = (body, status = 200) => ({
+  ok: status >= 200 && status < 300,
+  status,
+  json: async () => body,
+  text: async () => (typeof body === 'string' ? body : JSON.stringify(body)),
+});
 
 // Signs in, then answers the monitoring lookup for whichever entity the case
 // declares. Everything else 404s so an unexpected request is visible.

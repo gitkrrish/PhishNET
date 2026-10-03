@@ -4,11 +4,15 @@ import { motion } from 'framer-motion';
 import { Activity, ArrowRight, Plus, RefreshCw } from 'lucide-react';
 
 import {
+  UNREAD,
+  figure,
   formatRelativeTime,
   monitorSeverityColor,
   monitoringCapabilities,
   monitoringHub,
   runAllDueMonitors,
+  schedulerState,
+  tickLabel,
   type MonitoringCapabilities,
   type MonitoringHubData,
 } from '../../lib/intelligence/monitoring';
@@ -87,7 +91,7 @@ export default function MonitoringHubPage() {
           : stats.activeMonitors === 0
             ? { label: 'IDLE', color: 'var(--tw-medium)' }
             : { label: 'HEALTHY', color: 'var(--tw-low)' }
-    : { label: '—', color: 'var(--tw-text-faint)' };
+    : { label: 'NOT READ', color: 'var(--tw-text-faint)' };
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="min-h-screen page-enter" style={sectionStyle()}>
@@ -119,12 +123,12 @@ export default function MonitoringHubPage() {
 
         {/* Platform-wide monitoring status, all read from the backend. */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-          <Counter label="Total monitors" value={stats?.totalMonitors ?? 0} to="/app/monitoring/monitors" />
-          <Counter label="Active" value={stats?.activeMonitors ?? 0} color="var(--tw-low)" />
-          <Counter label="Running" value={stats?.runningMonitors ?? 0} color="var(--tw-burgundy)" />
-          <Counter label="Paused" value={stats?.pausedMonitors ?? 0} color="var(--tw-medium)" />
-          <Counter label="Error" value={stats?.failedMonitors ?? 0} color="var(--tw-critical)" />
-          <Counter label="Source unavailable" value={stats?.sourceUnavailableMonitors ?? 0} color="var(--tw-high)" />
+          <Counter label="Total monitors" value={figure(stats?.totalMonitors)} to="/app/monitoring/monitors" />
+          <Counter label="Active" value={figure(stats?.activeMonitors)} color="var(--tw-low)" />
+          <Counter label="Running" value={figure(stats?.runningMonitors)} color="var(--tw-burgundy)" />
+          <Counter label="Paused" value={figure(stats?.pausedMonitors)} color="var(--tw-medium)" />
+          <Counter label="Error" value={figure(stats?.failedMonitors)} color="var(--tw-critical)" />
+          <Counter label="Source unavailable" value={figure(stats?.sourceUnavailableMonitors)} color="var(--tw-high)" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -136,10 +140,10 @@ export default function MonitoringHubPage() {
                   {health.label}
                 </span>
               </div>
-              <Row label="Scheduler" value={scheduler?.started ? 'Running' : 'Stopped'} />
-              <Row label="Tick interval" value={`${Math.round((scheduler?.tickMs ?? 0) / 1000)}s`} />
-              <Row label="Due for a check now" value={String(scheduler?.dueNow ?? 0)} />
-              <Row label="Next due" value={scheduler?.nextDueAt ? formatRelativeTime(scheduler.nextDueAt) : 'nothing scheduled'} />
+              <Row label="Scheduler" value={schedulerState(scheduler).label} />
+              <Row label="Tick interval" value={tickLabel(scheduler)} />
+              <Row label="Due for a check now" value={figure(scheduler?.dueNow)} />
+              <Row label="Next due" value={scheduler ? (scheduler.nextDueAt ? formatRelativeTime(scheduler.nextDueAt) : 'nothing scheduled') : UNREAD} />
               <Row label="Snapshot taken" value={hub ? formatRelativeTime(hub.generatedAt) : '—'} />
               <p className="text-[10px] leading-relaxed pt-1" style={tv.faint}>
                 The scheduler re-evaluates due monitors every tick. Per-monitor cadence is set by the slowest
@@ -151,10 +155,10 @@ export default function MonitoringHubPage() {
 
           <Panel title="Alerts" subtitle="Raised by the monitoring engine">
             <div className="grid grid-cols-2 gap-3">
-              <Counter label="Recent alerts" value={stats?.totalAlerts ?? 0} color="var(--tw-medium)" to="/app/monitoring/alerts" />
-              <Counter label="Critical (open)" value={stats?.criticalAlerts ?? 0} color="var(--tw-critical)" to="/app/monitoring/alerts" />
-              <Counter label="Open" value={stats?.openAlerts ?? 0} color="var(--tw-critical)" to="/app/monitoring/alerts" />
-              <Counter label="Monitors triggered" value={stats?.recentlyTriggeredMonitors ?? 0} color="var(--tw-burgundy)" />
+              <Counter label="Recent alerts" value={figure(stats?.totalAlerts)} color="var(--tw-medium)" to="/app/monitoring/alerts" />
+              <Counter label="Critical (open)" value={figure(stats?.criticalAlerts)} color="var(--tw-critical)" to="/app/monitoring/alerts" />
+              <Counter label="Open" value={figure(stats?.openAlerts)} color="var(--tw-critical)" to="/app/monitoring/alerts" />
+              <Counter label="Monitors triggered" value={figure(stats?.recentlyTriggeredMonitors)} color="var(--tw-burgundy)" />
             </div>
           </Panel>
 
@@ -373,7 +377,7 @@ function ActionRun({ busy, onClick }: { busy: boolean; onClick: () => void }) {
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="flex items-center justify-between text-xs">
       <span style={tv.muted}>{label}</span>

@@ -1,6 +1,8 @@
+# Kept in step with the repo-root render.yaml, which is the file Render reads
+# for this repository (rootDir: tracewall). See that file for why `name` is
+# omitted and where the deployed URL has to be registered.
 services:
   - type: web
-    name: phishnet-api
     runtime: node
     region: oregon
     plan: free

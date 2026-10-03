@@ -10,18 +10,111 @@ export async function signIn(email: string, password: string) {
   return session;
 }
 
+/**
+ * Which part of the call failed, whenever the response makes it determinable.
+ * `routing` means the request never reached a handler for this path — a wrong
+ * API base, a rewrite that still points at the wrong origin, or the SPA
+ * fallback answering instead of the API.
+ */
+export type ApiFailureStage = 'network' | 'routing' | 'authentication' | 'validation' | 'upstream' | 'response';
+
+/** An `Error` that also carries the status, the operation and the stage. */
+export interface ApiFailure extends Error {
+  status: number;
+  operation: string;
+  stage: ApiFailureStage;
+}
+
+function stageFor(status: number): ApiFailureStage {
+  if (status === 401 || status === 403) return 'authentication';
+  if (status === 404 || status === 405) return 'routing';
+  if (status === 502 || status === 503 || status === 504) return 'upstream';
+  if (status >= 400) return 'validation';
+  return 'response';
+}
+
+function defaultDetail(status: number): string {
+  if (status === 404) return 'no handler for this path on the configured API backend';
+  if (status === 405) return 'the API backend does not accept this method on this path';
+  if (status === 502 || status === 503 || status === 504) return 'the API backend is unreachable or not responding';
+  if (status >= 500) return 'the API backend failed while executing the request';
+  return 'the request was rejected by the API backend';
+}
+
+/**
+ * The backend's own message, or a safe description of the status when it
+ * sent none. Only these two documented shapes are read, and the result is
+ * length-bounded, so an unexpected body can never surface an entire page of
+ * HTML or an upstream framework's internals in the interface.
+ */
+function detailFrom(payload: unknown, status: number): string {
+  const body = (payload && typeof payload === 'object' ? payload : {}) as {
+    error?: unknown;
+    message?: unknown;
+    detail?: unknown;
+  };
+  const nested = body.error && typeof body.error === 'object' ? (body.error as { message?: unknown }) : null;
+  const candidates = [
+    typeof body.error === 'string' ? body.error : null,
+    typeof nested?.message === 'string' ? nested.message : null,
+    typeof body.message === 'string' ? body.message : null,
+    typeof body.detail === 'string' ? body.detail : null,
+  ];
+  const message = candidates.find(value => typeof value === 'string' && value.trim());
+  return String(message ?? defaultDetail(status)).replace(/\s+/g, ' ').trim().slice(0, 300);
+}
+
+function apiError(operation: string, status: number, stage: ApiFailureStage, detail: string): ApiFailure {
+  const error = new Error(`${operation} failed: ${detail} (${status ? `HTTP ${status}` : 'no response'})`) as ApiFailure;
+  error.status = status;
+  error.operation = operation;
+  error.stage = stage;
+  return error;
+}
+
 export async function request<T = any>(path: string, options: RequestInit = {}): Promise<T> {
+  const operation = `${options.method || 'GET'} /api${path.split('?')[0]}`;
   if (!token && path !== '/auth/sign-in') {
     const session = await signIn('analyst@tracewall.demo', 'demo-password');
     token = session.token;
   }
   const isMultipart = typeof FormData !== 'undefined' && options.body instanceof FormData;
-  const response = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: { ...(isMultipart ? {} : { 'Content-Type': 'application/json' }), ...(token ? { Authorization: `Bearer ${token}` } : {}), ...options.headers },
-  });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(payload.error?.message || `API request failed (${response.status})`);
+  let response: Response;
+  let raw: string;
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers: { ...(isMultipart ? {} : { 'Content-Type': 'application/json' }), ...(token ? { Authorization: `Bearer ${token}` } : {}), ...options.headers },
+    });
+    // Read inside the same guard: a body that never completes (a dropped
+    // connection, an aborted stream) must be reported as a failed call rather
+    // than thrown as a bare stream error with no operation and no status.
+    raw = await response.text();
+  } catch {
+    // The host did not answer at all: wrong API base, TLS failure, blocked by
+    // the browser, or a CORS rejection. Never reported as success.
+    throw apiError(operation, 0, 'network', 'the API backend could not be reached');
+  }
+
+  // Parsed leniently, then strictly, so a non-JSON 200 cannot be mistaken for
+  // a successful call — that silently returned `{}` before, which is how a
+  // request that never reached the backend came to render as an empty
+  // dashboard.
+  let payload: unknown;
+  try {
+    payload = raw ? JSON.parse(raw) : {};
+  } catch {
+    payload = null;
+  }
+
+  if (payload === null) {
+    throw response.ok
+      ? apiError(operation, response.status, 'routing', 'the API URL answered with a non-JSON page, so the request was not routed to the API backend')
+      : apiError(operation, response.status, stageFor(response.status), detailFrom(null, response.status));
+  }
+  if (!response.ok) {
+    throw apiError(operation, response.status, stageFor(response.status), detailFrom(payload, response.status));
+  }
   return payload as T;
 }
 

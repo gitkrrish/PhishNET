@@ -4,11 +4,15 @@ import { motion } from 'framer-motion';
 import { Activity, RefreshCw, Zap } from 'lucide-react';
 
 import {
+  UNREAD,
+  figure,
   formatRelativeTime,
   listMonitors,
   monitoringCapabilities,
   monitoringHub,
   runAllDueMonitors,
+  schedulerState,
+  tickLabel,
   type Monitor,
   type MonitoringCapabilities,
   type MonitoringHubData,
@@ -122,10 +126,10 @@ export default function MonitoringHealthPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <Panel title="Scheduler" subtitle="The single engine every monitor runs on">
             <div className="space-y-2 text-xs">
-              <Row label="State" value={scheduler?.started ? 'Running' : 'Stopped'} color={scheduler?.started ? 'var(--tw-low)' : 'var(--tw-high)'} />
-              <Row label="Tick interval" value={`${Math.round((scheduler?.tickMs ?? 0) / 1000)}s`} />
-              <Row label="Due now" value={String(scheduler?.dueNow ?? 0)} />
-              <Row label="Next due" value={scheduler?.nextDueAt ? formatRelativeTime(scheduler.nextDueAt) : 'nothing scheduled'} />
+              <Row label="State" value={schedulerState(scheduler).label} color={schedulerState(scheduler).color} />
+              <Row label="Tick interval" value={tickLabel(scheduler)} />
+              <Row label="Due now" value={figure(scheduler?.dueNow)} />
+              <Row label="Next due" value={scheduler ? (scheduler.nextDueAt ? formatRelativeTime(scheduler.nextDueAt) : 'nothing scheduled') : UNREAD} />
               <Row label="Snapshot" value={hub ? formatRelativeTime(hub.generatedAt) : '—'} />
               <p className="text-[10px] leading-relaxed pt-2" style={tv.faint}>
                 Monitors are selected for a cycle by their persisted next-check time, so a restart resumes exactly where
@@ -166,13 +170,13 @@ export default function MonitoringHealthPage() {
 
           <Panel title="Lifecycle" subtitle="Analyst-controlled state, independent of runtime">
             <div className="space-y-2 text-xs">
-              <Row label="Active" value={String(hub?.stats.activeMonitors ?? 0)} color="var(--tw-low)" />
-              <Row label="Paused" value={String(hub?.stats.pausedMonitors ?? 0)} color="var(--tw-medium)" />
-              <Row label="Disabled" value={String(hub?.stats.disabledMonitors ?? 0)} color="var(--tw-dust)" />
-              <Row label="Awaiting data" value={String(hub?.stats.awaitingDataMonitors ?? 0)} color="var(--tw-info)" />
-              <Row label="Failed" value={String(hub?.stats.failedMonitors ?? 0)} color="var(--tw-critical)" />
-              <Row label="Source unavailable" value={String(hub?.stats.sourceUnavailableMonitors ?? 0)} color="var(--tw-high)" />
-              <Row label="Total" value={String(hub?.stats.totalMonitors ?? 0)} />
+              <Row label="Active" value={String(figure(hub?.stats.activeMonitors))} color="var(--tw-low)" />
+              <Row label="Paused" value={String(figure(hub?.stats.pausedMonitors))} color="var(--tw-medium)" />
+              <Row label="Disabled" value={String(figure(hub?.stats.disabledMonitors))} color="var(--tw-dust)" />
+              <Row label="Awaiting data" value={String(figure(hub?.stats.awaitingDataMonitors))} color="var(--tw-info)" />
+              <Row label="Failed" value={String(figure(hub?.stats.failedMonitors))} color="var(--tw-critical)" />
+              <Row label="Source unavailable" value={String(figure(hub?.stats.sourceUnavailableMonitors))} color="var(--tw-high)" />
+              <Row label="Total" value={String(figure(hub?.stats.totalMonitors))} />
             </div>
           </Panel>
         </div>
@@ -326,7 +330,7 @@ export default function MonitoringHealthPage() {
   );
 }
 
-function Row({ label, value, color }: { label: string; value: string; color?: string }) {
+function Row({ label, value, color }: { label: string; value: string | number; color?: string }) {
   return (
     <div className="flex items-center justify-between">
       <span style={tv.muted}>{label}</span>

@@ -114,7 +114,10 @@ export async function handleIntelligenceRequest(request, response, user, path) {
   const query = method === 'GET'
     ? Object.fromEntries(new URL(request.url, `http://${request.headers.host}`).searchParams)
     : {};
-  const body = method === 'POST' || method === 'PATCH' ? await readJson(request) : {};
+  // PUT is read too: `PUT /api/intel/monitoring/:id` is the only PUT route
+  // here, and without it the request body was never consumed, so every monitor
+  // edit was accepted with HTTP 200 and silently discarded.
+  const body = method === 'POST' || method === 'PUT' || method === 'PATCH' ? await readJson(request) : {};
   const context = {
     analyst: user?.name || user?.email || 'analyst',
     origin: 'API',

@@ -999,6 +999,10 @@ const MONITOR_PATCH_COLUMNS = {
   alertConditions: 'alert_conditions',
   notificationPref: 'notification_pref',
   notifyChannel: 'notify_channel',
+  // The monitor PATCH route has always accepted `notes` and the column
+  // already exists on intel_monitor; without this mapping an analyst note was
+  // accepted and then discarded.
+  notes: 'notes',
   lastCheck: 'last_check',
   nextCheck: 'next_check',
   lastEventId: 'last_event_id',

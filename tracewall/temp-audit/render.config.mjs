@@ -16,7 +16,7 @@ export default style;
 `;
 
 export default {
-  input: ['temp-audit/protection-panels.tsx', 'temp-audit/protection-render.tsx', 'temp-audit/protection-effects.tsx', 'temp-audit/custody-nl-render.tsx'],
+  input: ['temp-audit/protection-panels.tsx', 'temp-audit/protection-render.tsx', 'temp-audit/protection-effects.tsx', 'temp-audit/custody-nl-render.tsx', 'temp-audit/monitoring-hub-client.mts'],
   platform: 'node',
   output: {
     dir: 'temp-audit/.out',

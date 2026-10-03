@@ -471,6 +471,39 @@ export const setAlertStatus = (alertId: string, status: string, resolution?: str
     body: JSON.stringify({ status, resolution }),
   }).then(data);
 
+// ── Unread figures ──────────────────────────────────────────────
+//
+// The hub's counters used to fall back to `?? 0`, and the scheduler row to
+// `started ? 'Running' : 'Stopped'`. A load that never reached the engine then
+// rendered as a real, empty dashboard: Total 0, Active 0, Running 0, Paused 0,
+// Error 0, Scheduler "Stopped", tick "0s". Every one of those is a measured
+// claim about the engine, and none of them had been measured — the request
+// never arrived. An unread figure is shown as unknown instead, and the error
+// banner above it still says what failed. The same rule applies in reverse: a
+// reported zero is a real zero and must still render as 0.
+
+/** Rendered in place of any figure the engine has not answered for. */
+export const UNREAD = '—';
+
+/** A monitoring figure the backend has not returned yet. */
+export function figure(value: number | string | null | undefined): string | number {
+  return value === null || value === undefined ? UNREAD : value;
+}
+
+/** The scheduler state, which must never claim a state it has not observed. */
+export function schedulerState(scheduler: { started: boolean } | undefined): { label: string; color: string } {
+  if (!scheduler) return { label: 'Not read', color: 'var(--tw-text-faint)' };
+  return scheduler.started
+    ? { label: 'Running', color: 'var(--tw-low)' }
+    : { label: 'Stopped', color: 'var(--tw-high)' };
+}
+
+/** Tick interval, formatted only once the engine has reported one. */
+export function tickLabel(scheduler: { tickMs: number } | undefined): string {
+  if (!scheduler || !Number.isFinite(scheduler.tickMs)) return UNREAD;
+  return `${Math.round(scheduler.tickMs / 1000)}s`;
+}
+
 // ── Shared polling hook ─────────────────────────────────────────
 /**
  * Poll the monitoring endpoints on the scheduler cadence. This is what

@@ -1,8 +1,10 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://phishnet-api.onrender.com/api/:path*"
+      "destination": "${PHISHNET_API_ORIGIN}/api/:path*",
+      "env": ["PHISHNET_API_ORIGIN"]
     },
     {
       "source": "/(.*)",

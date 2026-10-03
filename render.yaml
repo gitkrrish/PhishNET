@@ -1,6 +1,21 @@
+# Render service for the PhishNet / Viper Trace API.
+#
+# The 24x7 monitoring scheduler runs inside this Node process
+# (backend/services/intel/monitoringService.mjs, 30s tick), so this backend
+# must stay on a long-running Node host. It cannot run on Vercel serverless.
+#
+# `name` is deliberately omitted: Render service names are globally unique,
+# and `phishnet-api` is already taken on Render by an unrelated Python
+# service ("Phishing Detection API"). A blueprint that names an existing
+# service fails to provision, which is why the API was never reachable at
+# the URL the Vercel rewrite was pointing at. Leaving the name unset lets
+# Render allocate a free one.
+#
+# After the first successful deploy, copy the service's URL into the Vercel
+# project as PHISHNET_API_ORIGIN (no trailing slash). tracewall/vercel.json
+# expands it for the /api/:path* rewrite at request time.
 services:
   - type: web
-    name: phishnet-api
     runtime: node
     region: oregon
     plan: free
