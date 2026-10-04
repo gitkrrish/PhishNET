@@ -31,7 +31,7 @@ export const config = {
   awsRegion: process.env.AWS_REGION || 'us-east-1',
   awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
   awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-  dynamodbTableName: process.env.DYNAMODB_TABLE_NAME || 'viper-trace-ip-intelligence',
+  dynamodbTableName: process.env.DYNAMODB_TABLE_NAME || 'VIpertrace',
   dynamodbEndpoint: process.env.DYNAMODB_ENDPOINT || '',
 };
 
